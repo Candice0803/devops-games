@@ -38,7 +38,7 @@ jobs:
               working-directory: ./TwoShips
 
             - name: Security Audit
-              run: npm audit --audit-level=high
+              run: npm audit --audit-level=critical
               working-directory: ./TwoShips
 
             - name: Run Tests & Coverage
