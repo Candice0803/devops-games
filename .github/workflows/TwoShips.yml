@@ -6,10 +6,10 @@ on:
         - 'TwoShips'
     paths: [TwoShips/**]
 
-  pull_request:
-    branches:
-        - 'TwoShips'
-    paths: [TwoShips/**]
+#   pull_request:
+#     branches:
+#         - 'TwoShips'
+#     paths: [TwoShips/**]
 
   workflow_dispatch:
 
