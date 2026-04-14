@@ -32,17 +32,14 @@ jobs:
               run: npm ci
               working-directory: ./TwoShips
 
-            # 4. Vérification du style (Google Style)
-            - name: Run Linter (Google Style)
+            - name: Run Linter
               run: npm run lint
               working-directory: ./TwoShips
 
-            # 5. Audit de sécurité (DevSecOps)
             - name: Security Audit
               run: npm audit --audit-level=moderate
               working-directory: ./TwoShips
 
-            # 6. Exécution des tests et vérification couverture (100%)
             - name: Run Tests & Coverage
               run: npm run test:coverage
               working-directory: ./TwoShips
