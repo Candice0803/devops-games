@@ -1,0 +1,49 @@
+name: CI Game 1 - Two Ships
+
+on:
+  push:
+    branches:
+        - 'main'
+    paths: [TwoShips/**]
+
+  pull_request:
+    branches:
+        - 'main'
+    paths: [TwoShips/**]
+
+  workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+    
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with: 
+                node-version: 16.13.x
+                cache: npm
+                cache-dependency-path: TwoShips/package-lock.json
+
+            - name: Install dependencies
+              run: npm ci
+              working-directory: ./TwoShips
+
+            # 4. Vérification du style (Google Style)
+            - name: Run Linter (Google Style)
+              run: npm run lint
+              working-directory: ./TwoShips
+
+            # 5. Audit de sécurité (DevSecOps)
+            - name: Security Audit
+              run: npm audit --audit-level=moderate
+              working-directory: ./TwoShips
+
+            # 6. Exécution des tests et vérification couverture (100%)
+            - name: Run Tests & Coverage
+              run: npm run test:coverage
+              working-directory: ./TwoShips
+ 
