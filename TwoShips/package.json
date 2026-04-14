@@ -4,7 +4,7 @@
   "scripts": {
     "lint": "eslint .",
     "test:unit": "mocha tests/unit/**/*.js",
-    "test:coverage": "nyc --check-coverage --lines 0 npm run test:unit"
+    "test:coverage": "nyc --check-coverage --lines 100 npm run test:unit"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
