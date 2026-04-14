@@ -3,6 +3,7 @@ name: CI Game 1 - Two Ships
 on:
   push:
     branches:
+        - 'main'
         - 'TwoShips'
     paths: [TwoShips/**]
 
