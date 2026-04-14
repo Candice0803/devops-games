@@ -2,7 +2,7 @@
   "name": "twoships",
   "version": "1.0.0",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "test:unit": "mocha tests/unit/**/*.js",
     "test:coverage": "nyc --check-coverage --lines 100 npm run test:unit"
   },
