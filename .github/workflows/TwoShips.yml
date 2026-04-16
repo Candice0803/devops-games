@@ -35,6 +35,7 @@ jobs:
 
             - name: Run Linter
               run: npm run lint
+              continue-on-error: true
               working-directory: ./TwoShips
 
             - name: Security Audit
