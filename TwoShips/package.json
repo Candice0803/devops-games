@@ -4,9 +4,9 @@
   "description": "https://razh.github.io/js13k-2021",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "test:unit": "mocha tests/unit/**/*.js",
-    "test:coverage": "nyc --check-coverage --lines 100 --include='src/math.js' npm run test:unit",
+    "test:coverage": "nyc --check-coverage --lines 100 npm run test:unit",
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview"
