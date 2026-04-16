@@ -44,3 +44,12 @@ jobs:
             - name: Run Tests & Coverage
               run: npm run test:coverage
               working-directory: ./TwoShips
+
+            - name: Notify Failure
+              if: failure()
+              run: |
+                curl -H "Content-Type: application/json" \
+                    -d '{
+                      "content": "❌ **Échec du Pipeline TwoShips !**\n**Branche :** ${{ github.ref_name }}\n**Commit :** ${{ github.sha }}\n**Lien vers l erreur :** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }' \
+                    ${{ secrets.DISCORD_WEBHOOK }}
