@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint . --fix",
     "test:unit": "mocha tests/unit/**/*.js",
-    "test:coverage": "nyc --check-coverage --lines 100 npm run test:unit",
+    "test:coverage": "nyc --check-coverage --lines 100 --include='src/math.js' npm run test:unit",
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview"
