@@ -71,4 +71,11 @@ jobs:
               uses: treosh/lighthouse-ci-action@v12
               with:
                 urls: 'http://localhost:8080'
-                budgetPath: ./budget.json 
+                budgetPath: ./budget.json
+
+            - name: Deploy to GitHub Pages
+              if: github.ref == 'refs/heads/TwoShips'
+              uses: JamesIves/github-pages-deploy-action@v4
+              with: 
+                folder: . 
+                branch: gh-pages
