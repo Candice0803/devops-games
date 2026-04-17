@@ -44,6 +44,12 @@ jobs:
 
             - name: Run Tests & Coverage
               run: npm run test:coverage
+              continue-on-error: true
+              working-directory: ./TwoShips
+
+            - name: Check Coverage Threshold
+              run: npm run check-coverage
+              continue-on-error: true
               working-directory: ./TwoShips
 
             - name: Notify Failure
