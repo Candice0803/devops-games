@@ -60,3 +60,20 @@ jobs:
                       "content": "❌ **Échec du Pipeline TwoShips !**\n**Branche :** ${{ github.ref_name }}\n**Commit :** ${{ github.sha }}\n**Lien vers l erreur :** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                     }' \
                     ${{ secrets.DISCORD_WEBHOOK }}
+
+            - name: Security Audit (npm audit)
+              run: npm audit --audit-level=high
+              working-directory: ./TwoShips
+
+            - name: Upload Test Screenshots
+              uses: actions/upload-artifact@v4
+              if: failure()
+              with:
+                name: test-screenshots
+                path: TwoShips/screenshots/
+
+            - name: Lighthouse Check
+              uses: treosh/lighthouse-ci-action@v12
+              with:
+                urls: 'http://localhost:8080'
+                budgetPath: ./budget.json 
