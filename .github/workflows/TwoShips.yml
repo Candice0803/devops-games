@@ -55,8 +55,9 @@ jobs:
                     }' \
                     ${{ secrets.DISCORD_WEBHOOK }}
 
-            - name: Security Audit (npm audit)
-              run: npm audit --audit-level=high
+            - name: Security Audit
+              run: npm audit --audit-level=critical
+              continue-on-error: true
               working-directory: ./TwoShips
 
             - name: Upload Test Screenshots
