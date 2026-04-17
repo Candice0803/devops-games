@@ -2,15 +2,9 @@ name: CI Game 1 - Two Ships
 
 on:
   push:
-    branches:
-        - 'main'
-        - 'TwoShips'
-    paths: [TwoShips/**]
-
-#   pull_request:
-#     branches:
-#         - 'TwoShips'
-#     paths: [TwoShips/**]
+    branches: [ "main", "TwoShips" ]
+  pull_request:
+    branches: [ "main", "TwoShips" ]
 
   workflow_dispatch:
 
