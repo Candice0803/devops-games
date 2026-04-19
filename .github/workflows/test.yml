@@ -13,21 +13,20 @@ jobs:
 
     steps:
       # -------------------------
-      # CHECKOUT PROPRE
+      # CHECKOUT
       # -------------------------
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       # -------------------------
-      # DEBUG 
+      # DEBUG (ON VOIT TOUT)
       # -------------------------
       - name: Debug structure
         run: |
-          echo "=== ROOT ==="
+          echo "===== ROOT ====="
+          pwd
           ls -la
-          echo "=== GAME FOLDER ==="
+          echo "===== GAME FOLDER ====="
           ls -la js-game-keep-white-space || echo "FOLDER NOT FOUND"
 
       # -------------------------
@@ -39,31 +38,34 @@ jobs:
           node-version: 18
 
       # -------------------------
-      # INSTALL
+      # INSTALL (FORCÉ)
       # -------------------------
       - name: Install dependencies
-        run: npm install
-        working-directory: js-game-keep-white-space
+        run: |
+          cd js-game-keep-white-space
+          npm install
 
       # -------------------------
       # TESTS
       # -------------------------
       - name: Run tests
-        run: npm test || true
-        working-directory: js-game-keep-white-space
+        run: |
+          cd js-game-keep-white-space
+          npm test || true
 
       # -------------------------
       # AUDIT
       # -------------------------
       - name: Audit
-        run: npm audit || true
-        working-directory: js-game-keep-white-space
+        run: |
+          cd js-game-keep-white-space
+          npm audit || true
 
       # -------------------------
       # DOCKER
       # -------------------------
       - name: Build Docker image
-        run: docker build -t mon-jeu js-game-keep-white-space
+        run: docker build -t mon-jeu ./js-game-keep-white-space
 
       - name: Run container
         run: docker run -d -p 8080:80 --name test-container mon-jeu
@@ -83,7 +85,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Deploy GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
