@@ -1,0 +1,4 @@
+// Traduit CommonJs en ES Modules
+{
+  "presets": ["@babel/preset-env"]
+}
