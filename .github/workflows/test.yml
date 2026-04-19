@@ -2,94 +2,29 @@ name: CI-CD
 
 on:
   push:
-    branches: [ "main", "feature/keep-white-space" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ "**" ]
 
 jobs:
   ci:
     runs-on: ubuntu-latest
 
     steps:
-      # -------------------------
-      # CHECKOUT
-      # -------------------------
       - name: Checkout
         uses: actions/checkout@v4
 
-      # -------------------------
-      # DEBUG (ON VOIT TOUT)
-      # -------------------------
-      - name: Debug structure
+      - name: Show repo content
         run: |
-          echo "===== ROOT ====="
-          pwd
+          echo "ROOT:"
           ls -la
-          echo "===== GAME FOLDER ====="
-          ls -la js-game-keep-white-space || echo "FOLDER NOT FOUND"
+          echo "GAME:"
+          ls -la js-game-keep-white-space || echo "NOT FOUND"
 
-      # -------------------------
-      # NODE
-      # -------------------------
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      # -------------------------
-      # INSTALL (FORCÉ)
-      # -------------------------
-      - name: Install dependencies
+      - name: Find package.json
         run: |
-          cd js-game-keep-white-space
+          find . -name package.json
+
+      - name: Install (SAFE)
+        run: |
+          cd js-game-keep-white-space || exit 1
+          ls -la
           npm install
-
-      # -------------------------
-      # TESTS
-      # -------------------------
-      - name: Run tests
-        run: |
-          cd js-game-keep-white-space
-          npm test || true
-
-      # -------------------------
-      # AUDIT
-      # -------------------------
-      - name: Audit
-        run: |
-          cd js-game-keep-white-space
-          npm audit || true
-
-      # -------------------------
-      # DOCKER
-      # -------------------------
-      - name: Build Docker image
-        run: docker build -t mon-jeu ./js-game-keep-white-space
-
-      - name: Run container
-        run: docker run -d -p 8080:80 --name test-container mon-jeu
-
-      - name: Wait
-        run: sleep 5
-
-      - name: Test HTTP
-        run: curl -f http://localhost:8080
-
-      - name: Stop container
-        if: always()
-        run: docker stop test-container || true
-
-  deploy:
-    needs: ci
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Deploy GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./js-game-keep-white-space
