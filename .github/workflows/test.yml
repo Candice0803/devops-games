@@ -11,37 +11,34 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./js-game-keep-white-space
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Debug
-        run: ls -R $GITHUB_WORKSPACE
+        run: ls -R
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # 🔥 CHEMIN CORRIGÉ ICI
       - name: Install dependencies
         run: npm install
+        working-directory: ./devops-games/js-game-keep-white-space
 
       - name: Run tests
         run: npm test || true
+        working-directory: ./devops-games/js-game-keep-white-space
 
       - name: Audit
         run: npm audit || true
+        working-directory: ./devops-games/js-game-keep-white-space
 
       - name: Build Docker image
-        working-directory: .
-        run: docker build -t mon-jeu .
+        run: docker build -t mon-jeu ./devops-games/js-game-keep-white-space
 
       - name: Run container
-        working-directory: .
         run: docker run -d -p 8080:80 --name test-container mon-jeu
 
       - name: Wait
@@ -61,8 +58,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy GitHub Pages
+      - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./js-game-keep-white-space
+          publish_dir: ./devops-games/js-game-keep-white-space
