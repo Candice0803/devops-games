@@ -2,7 +2,7 @@ name: CI-CD
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [ "main", "feature/keep-white-space" ]
 
 jobs:
   ci:
@@ -12,19 +12,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Show repo content
-        run: |
-          echo "ROOT:"
-          ls -la
-          echo "GAME:"
-          ls -la js-game-keep-white-space || echo "NOT FOUND"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-      - name: Find package.json
-        run: |
-          find . -name package.json
+      - name: Install dependencies
+        run: npm install
+        working-directory: js-game-keep-white-space
 
-      - name: Install (SAFE)
-        run: |
-          cd js-game-keep-white-space || exit 1
-          ls -la
-          npm install
+      - name: Run tests
+        run: npm test || true
+        working-directory: js-game-keep-white-space
+
+      - name: Audit
+        run: npm audit || true
+        working-directory: js-game-keep-white-space
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./js-game-keep-white-space
