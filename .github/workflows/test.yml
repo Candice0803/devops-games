@@ -9,41 +9,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2. Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
+      # 3. Install deps
       - name: Install deps
         run: |
-          cd js-game-keep-white-space
-          if [ -f package.json ]; then npm ci; else echo "no package.json"; fi
+          if [ -f js-game-keep-white-space/package.json ]; then
+            cd js-game-keep-white-space && npm ci
+          else
+            echo "no package.json"
+          fi
 
+      # 4. Tests
       - name: Run tests
         run: |
-          cd js-game-keep-white-space
-          if npm run | grep -q test; then npm test; else echo "no tests"; fi
+          if [ -f js-game-keep-white-space/package.json ]; then
+            cd js-game-keep-white-space && npm test || echo "no tests"
+          fi
 
+      # 5. Audit
       - name: Audit
         run: |
           cd js-game-keep-white-space
           npm audit --audit-level=high || true
 
+      # 6. Build Docker 
       - name: Build Docker
-        run: |
-          cd js-game-keep-white-space
-          docker build -t mon-jeu .
+        run: docker build -t mon-jeu ./js-game-keep-white-space
 
+      # 7. Test container
       - name: Test container
         run: |
-          cd js-game-keep-white-space
           docker run -d -p 8080:80 --name test-container mon-jeu
           sleep 5
           curl -f http://localhost:8080
 
+      # 8. Stop container
       - name: Stop container
         if: always()
         run: docker stop test-container || true
