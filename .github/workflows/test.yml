@@ -11,34 +11,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2. Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
+      # 3. Install deps 
       - name: Install deps
         run: npm install
+        working-directory: ./js-game-keep-white-space
 
+      # 4. Run tests
       - name: Run tests
         run: npm test
+        working-directory: ./js-game-keep-white-space
 
+      # 5. Audit sécurité
       - name: Audit
         run: npm audit --audit-level=high
+        working-directory: ./js-game-keep-white-space
 
+      # 6. Build Docker
       - name: Build Docker image
         run: docker build -t mon-jeu ./js-game-keep-white-space
 
+      # 7. Run container + test HTTP
       - name: Run container test
         run: |
           docker run -d -p 8080:80 --name test-container mon-jeu
           sleep 5
           curl -f http://localhost:8080 || exit 1
 
+      # 8. Stop container
       - name: Stop container
         run: docker stop test-container
 
+      # 9. Deploy 
       - name: Deploy
-        run: echo "Application prête et testée - déploiement validé"
+        run: echo "Application prête et testée, déploiement validé"
