@@ -15,48 +15,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # DEBUG (tu peux enlever après)
+      - name: Debug files
+        run: ls -R
+
       # -------------------------
-      # SETUP NODE
+      # NODE SETUP
       # -------------------------
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # -------------------------
+      # INSTALL + TEST
+      # -------------------------
       - name: Install dependencies
-        working-directory: js-game-keep-white-space
-        run: npm install
+        run: |
+          cd js-game-keep-white-space
+          npm install
 
-      # -------------------------
-      # LINT (Google style approx via eslint)
-      # -------------------------
-      - name: Install ESLint
-        working-directory: js-game-keep-white-space
-        run: npm install eslint --save-dev
-
-      - name: Run Linter
-        working-directory: js-game-keep-white-space
-        run: npx eslint . || true
-
-      # -------------------------
-      # TESTS
-      # -------------------------
       - name: Run tests
-        working-directory: js-game-keep-white-space
-        run: npm test || true
+        run: |
+          cd js-game-keep-white-space
+          npm test || true
+
+      - name: Audit
+        run: |
+          cd js-game-keep-white-space
+          npm audit || true
 
       # -------------------------
-      # AUDIT SECURITE
-      # -------------------------
-      - name: Audit dependencies
-        working-directory: js-game-keep-white-space
-        run: npm audit || true
-
-      # -------------------------
-      # DOCKER BUILD
+      # DOCKER
       # -------------------------
       - name: Build Docker image
-        run: docker build -t mon-jeu -f js-game-keep-white-space/Dockerfile js-game-keep-white-space
+        run: docker build -t mon-jeu ./js-game-keep-white-space
 
       - name: Run container
         run: docker run -d -p 8080:80 --name test-container mon-jeu
@@ -69,11 +62,8 @@ jobs:
 
       - name: Stop container
         if: always()
-        run: docker stop test-container
+        run: docker stop test-container || true
 
-  # -------------------------
-  # DEPLOIEMENT GITHUB PAGES
-  # -------------------------
   deploy:
     needs: ci
     runs-on: ubuntu-latest
