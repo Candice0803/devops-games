@@ -11,36 +11,61 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./js-game-keep-white-space
-
     steps:
-      - uses: actions/checkout@v4
+      # -------------------------
+      # CHECKOUT PROPRE
+      # -------------------------
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Debug
-        run: ls -R
+      # -------------------------
+      # DEBUG 
+      # -------------------------
+      - name: Debug structure
+        run: |
+          echo "=== ROOT ==="
+          ls -la
+          echo "=== GAME FOLDER ==="
+          ls -la js-game-keep-white-space || echo "FOLDER NOT FOUND"
 
+      # -------------------------
+      # NODE
+      # -------------------------
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # -------------------------
+      # INSTALL
+      # -------------------------
       - name: Install dependencies
         run: npm install
+        working-directory: js-game-keep-white-space
 
+      # -------------------------
+      # TESTS
+      # -------------------------
       - name: Run tests
         run: npm test || true
+        working-directory: js-game-keep-white-space
 
+      # -------------------------
+      # AUDIT
+      # -------------------------
       - name: Audit
         run: npm audit || true
+        working-directory: js-game-keep-white-space
 
+      # -------------------------
+      # DOCKER
+      # -------------------------
       - name: Build Docker image
-        working-directory: .
-        run: docker build -t mon-jeu .
+        run: docker build -t mon-jeu js-game-keep-white-space
 
       - name: Run container
-        working-directory: .
         run: docker run -d -p 8080:80 --name test-container mon-jeu
 
       - name: Wait
@@ -60,7 +85,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy Pages
+      - name: Deploy GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
