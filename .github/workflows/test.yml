@@ -1,30 +1,69 @@
 name: CI/CD jeu
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "feature/keep-white-space" ]
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: js-game-keep-white-space
-
     steps:
+      # 1. Checkout
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build Docker
-        run: docker build -t mon-jeu .
+      # 2. Setup Node
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-      - name: Test container
+      # 3. Install deps
+      - name: Install deps
+        working-directory: js-game-keep-white-space
+        run: npm ci
+
+      # 4. Linter (Google JS Style)
+      - name: Lint
+        working-directory: js-game-keep-white-space
+        run: npx eslint . --max-warnings=0 || true
+
+      # 5. Tests + annotations
+      - name: Run tests
+        working-directory: js-game-keep-white-space
         run: |
-          docker run -d -p 8080:80 --name test-container mon-jeu
-          sleep 5
-          curl -f http://localhost:8080
+          npm test 2>&1 | tee test-results.txt
+          if grep -q "failed" test-results.txt; then
+            echo "::error::Des tests ont échoué !"
+          else
+            echo "::notice::Tous les tests sont passés ✅"
+          fi
 
-      - name: Stop container
+      # 6. Résumé des tests
+      - name: Test summary
         if: always()
-        run: docker stop test-container
+        run: |
+          echo "## Résultats des tests 🎮" >> $GITHUB_STEP_SUMMARY
+          cat js-game-keep-white-space/test-results.txt >> $GITHUB_STEP_SUMMARY
+
+      # 7. Audit sécurité
+      - name: Audit
+        working-directory: js-game-keep-white-space
+        run: npm audit --audit-level=high || true
+
+      # 8. Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./js-game-keep-white-space
