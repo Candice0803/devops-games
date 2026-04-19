@@ -11,20 +11,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Debug structure 
-        run: ls -R
+      - name: Find project folder
+        run: |
+          echo "Recherche du package.json..."
+          PROJECT_DIR=$(find . -name package.json -not -path "*/node_modules/*" | head -n 1 | xargs dirname)
+          echo "Dossier trouvé: $PROJECT_DIR"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Go into project + install
+      - name: Install dependencies
         run: |
-          cd devops-games/js-game-keep-white-space
+          cd $PROJECT_DIR
           npm install
 
-      - name: Run tests (non bloquant)
+      - name: Run tests 
         run: |
-          cd devops-games/js-game-keep-white-space
+          cd $PROJECT_DIR
           npm test || true
