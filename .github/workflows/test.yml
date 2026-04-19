@@ -2,7 +2,7 @@ name: CI/CD jeu
 
 on:
   push:
-    branches: [ "main", "dev", "feature/**" ]
+    branches: [ "main", "dev", "feature/**", "fix/** "]
 
 jobs:
   build:
