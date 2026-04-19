@@ -2,18 +2,22 @@ name: CI/CD jeu
 
 on:
   push:
-    branches: [ "feature/keep-white-space", "main" ]
+    branches: [ "feature/keep-white-space" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: js-game-keep-white-space
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Build Docker
-        run: docker build -t mon-jeu ./js-game-keep-white-space
+        run: docker build -t mon-jeu .
 
       - name: Test container
         run: |
@@ -23,4 +27,4 @@ jobs:
 
       - name: Stop container
         if: always()
-        run: docker stop test-container || true
+        run: docker stop test-container
