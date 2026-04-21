@@ -2,11 +2,6 @@ require('@babel/register');
 const assert = require('assert');
 const math = require('../../src/math.js');
 
-// On neutralise audio.js qui fait planter le reste
-// require.cache[require.resolve('../../src/audio.js')] = {
-//   exports: { audio_init: () => {}, audio_play: () => {} }
-// };
-
 const player = require('../../src/player.js');
 
 describe('Tests unitaires et fonctionnels', () => {
