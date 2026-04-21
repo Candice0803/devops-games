@@ -1,32 +1,11 @@
-// Faux navigateur pour les tests
-const { JSDOM } = require('jsdom');
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-global.window = dom.window;
-global.document = dom.window.document;
-global.navigator = dom.window.navigator;
-
-// Empêche d'utiliser l'audio dans l'environnement de test, sinon ça plante
-const mockAudio = {
-  value: 0,
-  connect: () => ({}),
-  setValueAtTime: () => ({}),
-  createGain: () => mockAudio,
-  createOscillator: () => mockAudio,
-  destination: {},
-  gain: { value: 0, setValueAtTime: () => {} }
-};
-global.AudioContext = class { constructor() { return mockAudio; } };
-global.AudioNode = class {};
-global.GainNode = class {};
-
 require('@babel/register'); 
 const assert = require('assert');
 const math = require('../../src/math.js');
 
 // On neutralise audio.js qui fait planter le reste
-require.cache[require.resolve('../../src/audio.js')] = {
-  exports: { audio_init: () => {}, audio_play: () => {} }
-};
+// require.cache[require.resolve('../../src/audio.js')] = {
+//   exports: { audio_init: () => {}, audio_play: () => {} }
+// };
 
 const player = require('../../src/player.js');
 
