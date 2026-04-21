@@ -1,6 +1,152 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<meta http-equiv="refresh" content="0; url=js-game-keep-white-space/index.html" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub - DevOps Project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff0077;
+            --secondary: #6600ff;
+            --bg-dark: #0f172a;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-image: url('./assets/images/City3.png');
+            background-repeat: repeat-x;
+            background-size: auto 100%; 
+            
+            animation: scroller-horizontal 60s linear infinite;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        @keyframes scroller-horizontal {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: -2000px 0; 
+            }
+        }
+
+        .bg-glow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            width: 54vw;
+            height: 67vh;
+            background: rgb(242 230 236 / 48%);
+            border: solid 2px #ff0077;
+            border-radius: 1rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-family: "Bitcount Grid Double";
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(
+                to right, 
+                var(--primary), 
+                var(--secondary), 
+                #00d4ff, 
+                var(--primary)
+            );
+            background-size: 300% auto;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-flow 5s linear infinite;
+            filter: drop-shadow(0 0 8px rgba(255, 0, 119, 0.3));
+        }
+
+        @keyframes gradient-flow {
+            0% {
+                background-position: 0% center;
+            }
+            100% {
+                background-position: 300% center;
+            }
+        }
+
+        .container {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .game-card {
+            position: relative;
+            width: 300px;
+            padding: 2rem;
+            border: 2px solid #1e293b;
+            border-radius: 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .game-card.blue:hover {
+            transform: translateY(-10px);
+            border-color: var(--secondary);
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.2);
+        }
+
+        .game-card h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            border-radius: 0.5rem;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+    </style>
 </head>
+<body>
+    <div class="bg-glow">
+        <h1>Selectionner un Jeu</h1>
+        
+        <div class="container">
+            <a href="./TwoShips/index.html" class="game-card">
+                <h2>Two Ships</h2>
+                <p>Pilotez deux navires simultanément et survivez aux obstacles.</p>
+                <div class="btn">Jouer</div>
+            </a>
+
+            <a href="./SecondGame/index.html" class="game-card blue">
+                <h2>Second Game</h2>
+                <p>Découvrez l'autre projet de l'équipe DevOps.</p>
+                <div class="btn" style="background: var(--secondary); color: white;">Jouer</div>
+            </a>
+        </div>
+    </div>
+</body>
 </html>

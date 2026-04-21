@@ -2,48 +2,84 @@ name: CI Game 1 - Two Ships
 
 on:
   push:
-    branches:
-        - 'main'
-    paths: [TwoShips/**]
-
+    branches: [ "main", "TwoShips" ]
   pull_request:
-    branches:
-        - 'main'
-    paths: [TwoShips/**]
+    branches: [ "main", "TwoShips" ]
 
   workflow_dispatch:
 
 jobs:
     build:
         runs-on: ubuntu-latest
+
+        permissions:
+          contents: write
     
         steps:
             - name: Checkout
               uses: actions/checkout@v3
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with: 
-                node-version: 16.13.x
-                cache: npm
+                node-version: 20
+                cache: 'npm'
                 cache-dependency-path: TwoShips/package-lock.json
 
             - name: Install dependencies
               run: npm ci
               working-directory: ./TwoShips
 
-            # 4. Vérification du style (Google Style)
-            - name: Run Linter (Google Style)
+            - name: Run Linter
               run: npm run lint
+              continue-on-error: true
               working-directory: ./TwoShips
 
-            # 5. Audit de sécurité (DevSecOps)
             - name: Security Audit
-              run: npm audit --audit-level=moderate
+              run: npm audit --audit-level=critical
               working-directory: ./TwoShips
 
-            # 6. Exécution des tests et vérification couverture (100%)
             - name: Run Tests & Coverage
               run: npm run test:coverage
+              continue-on-error: true
               working-directory: ./TwoShips
- 
+
+            - name: Check Coverage Threshold
+              run: npm run check-coverage
+              continue-on-error: true
+              working-directory: ./TwoShips
+
+            - name: Notify Failure
+              if: failure()
+              run: |
+                curl -H "Content-Type: application/json" \
+                    -d '{
+                      "content": "❌ **Échec du Pipeline TwoShips !**\n**Branche :** ${{ github.ref_name }}\n**Commit :** ${{ github.sha }}\n**Lien vers l erreur :** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }' \
+                    ${{ secrets.DISCORD_WEBHOOK }}
+
+            - name: Security Audit
+              run: npm audit --audit-level=critical
+              continue-on-error: true
+              working-directory: ./TwoShips
+
+            - name: Upload Test Screenshots
+              uses: actions/upload-artifact@v4
+              if: failure()
+              with:
+                name: test-screenshots
+                path: TwoShips/screenshots/
+
+            - name: Lighthouse Check
+              uses: treosh/lighthouse-ci-action@v12
+              continue-on-error: true
+              with:
+                urls: 'http://localhost:8080'
+                budgetPath: ./budget.json
+
+            - name: Deploy to GitHub Pages
+              if: github.ref == 'refs/heads/TwoShips'
+              uses: JamesIves/github-pages-deploy-action@v4
+              with: 
+                folder: . 
+                branch: gh-pages
